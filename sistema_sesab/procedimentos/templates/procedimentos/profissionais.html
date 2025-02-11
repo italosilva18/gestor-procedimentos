@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar Profissionais</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Gerenciar Profissionais</h2>
+
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
+            Adicionar Profissional
+        </button>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>CRM</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="profissionaisTable"></tbody>
+        </table>
+    </div>
+
+    <!-- Modal de Adição -->
+    <div class="modal fade" id="addModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Adicionar Profissional</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="nomeProfissional" class="form-control mb-2" placeholder="Nome">
+                    <input type="text" id="crmProfissional" class="form-control" placeholder="CRM">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button id="salvarProfissional" class="btn btn-primary">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/profissionais.js' %}"></script>
+</body>
+</html>

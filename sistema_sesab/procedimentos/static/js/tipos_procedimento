@@ -1,0 +1,71 @@
+document.addEventListener("DOMContentLoaded", function () {
+    const tabela = document.getElementById("procedimentosTable");
+    const nomeInput = document.getElementById("nomeProcedimento");
+    const salvarBtn = document.getElementById("salvarProcedimento");
+
+    // ✅ Função para carregar os tipos de procedimentos
+    async function carregarTipos() {
+        try {
+            const resposta = await fetch("/api/tipos_procedimento/");
+            const dados = await resposta.json();
+
+            tabela.innerHTML = "";
+            dados.forEach(item => {
+                const linha = document.createElement("tr");
+                linha.innerHTML = `
+                    <td>${item.nome}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="excluirTipo(${item.id})">Excluir</button>
+                    </td>
+                `;
+                tabela.appendChild(linha);
+            });
+        } catch (error) {
+            console.error("Erro ao carregar os tipos de procedimento:", error);
+        }
+    }
+
+    // ✅ Função para adicionar um novo tipo de procedimento
+    salvarBtn.addEventListener("click", async function () {
+        const nome = nomeInput.value.trim();
+        if (!nome) return alert("Por favor, preencha o nome!");
+
+        try {
+            const resposta = await fetch("/api/tipos_procedimento/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome })
+            });
+
+            if (resposta.ok) {
+                alert("Tipo de procedimento adicionado com sucesso!");
+                nomeInput.value = "";
+                carregarTipos();
+            } else {
+                alert("Erro ao adicionar o tipo de procedimento.");
+            }
+        } catch (error) {
+            console.error("Erro ao adicionar tipo de procedimento:", error);
+        }
+    });
+
+    // ✅ Função para excluir um tipo de procedimento
+    window.excluirTipo = async function (id) {
+        if (!confirm("Tem certeza que deseja excluir este tipo de procedimento?")) return;
+
+        try {
+            const resposta = await fetch(`/api/tipos_procedimento/${id}/`, { method: "DELETE" });
+            if (resposta.ok) {
+                alert("Tipo de procedimento excluído com sucesso!");
+                carregarTipos();
+            } else {
+                alert("Erro ao excluir o tipo de procedimento.");
+            }
+        } catch (error) {
+            console.error("Erro ao excluir tipo de procedimento:", error);
+        }
+    };
+
+    // 🔥 Carregar os tipos de procedimento ao carregar a página
+    carregarTipos();
+});

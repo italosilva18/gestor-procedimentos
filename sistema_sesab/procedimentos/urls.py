@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from procedimentos.views import (
     TipoAnestesiaViewSet, TipoProcedimentoViewSet, ProfissionalViewSet, ProcedimentoViewSet,
     RegistrarUsuarioView, LoginUsuarioView,
-    cadastro_procedimento, crud_procedimentos, login_page, index
+    cadastro_procedimento, crud_procedimentos, login_page, index, profissionais, tipos_anestesia, tipos_procedimentos
 )
 
 # Criando um roteador para as rotas da API
@@ -28,4 +28,10 @@ urlpatterns = [
     path("cadastro/", cadastro_procedimento, name="cadastro_procedimento"),
     path("login/", login_page, name="login_page"),
     path('crud/', crud_procedimentos, name='crud_procedimentos'),
+
+      # 🔥 Páginas de gerenciamento
+    path("cadastro/tipos_anestesia/", tipos_anestesia, name="tipos_anestesia"),
+    path("cadastro/tipos_procedimentos/", tipos_procedimentos, name="tipos_procedimentos"),
+    path("cadastro/profissionais/", profissionais, name="profissionais"),
+    path("cadastro/procedimentos/", cadastro_procedimento, name="cadastro_procedimento"),
 ]

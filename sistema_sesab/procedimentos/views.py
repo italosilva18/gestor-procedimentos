@@ -68,17 +68,36 @@ class LoginUsuarioView(APIView):
             return Response({'refresh': str(refresh), 'access': str(refresh.access_token)})
         
         return Response({'error': 'Credenciais inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
-# index view    
-def cadastro_procedimento(request):
-    return render(request, "procedimentos/cadastro_procedimento.html")
 
-@login_required(login_url='/login/')
-def crud_procedimentos(request):
-    return render(request, 'procedimentos/crud.html')
+
 
 def login_page(request):
     return render(request, "procedimentos/login.html")
 
+# 🔥 Página Inicial
 def index(request):
-    return render(request, "index.html")
+    return render(request, "procedimentos/index.html")
 
+# 🔥 Página de Cadastro de Procedimento
+def cadastro_procedimento(request):
+    return render(request, "procedimentos/cadastro_procedimento.html")
+
+# 🔥 Página de Gerenciamento de Procedimentos
+@login_required(login_url='/login/')
+def crud_procedimentos(request):
+    return render(request, 'procedimentos/crud.html')
+
+# 🔥 Página de Cadastro de Tipos de Anestesia
+@login_required
+def tipos_anestesia(request):
+    return render(request, "procedimentos/tipos_anestesia.html")
+
+# 🔥 Página de Cadastro de Tipos de Procedimento
+@login_required
+def tipos_procedimentos(request):
+    return render(request, "procedimentos/tipos_procedimentos.html")
+
+# 🔥 Página de Cadastro de Profissionais
+@login_required
+def profissionais(request):
+    return render(request, "procedimentos/profissionais.html")

@@ -3,151 +3,154 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Gerenciamento de Procedimentos</title>
+    <meta charset="UTF-8">
+    <title>Gerenciamento de Procedimentos</title>
 
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <!-- Ícones FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-  
-  <!-- 🔹 Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="#">Sistema de Procedimentos</a>
-      <div class="ms-auto d-flex align-items-center">
-        <span class="text-white me-3" id="userLogged">Usuário: <b>Carregando...</b></span>
-        <button class="btn btn-danger btn-sm" id="logoutBtn">Logout</button>
-      </div>
+    <!-- Barra de navegação -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Sistema de Procedimentos</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/cadastro/"><i class="fa fa-user-plus"></i> Cadastrar Procedimento</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/crud/"><i class="fa fa-list"></i> Gerenciar Procedimentos</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="menuCadastro" role="button" data-bs-toggle="dropdown">
+                            <i class="fa fa-folder-open"></i> Cadastros
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/cadastro/tipos_anestesia/">Tipos de Anestesia</a></li>
+                            <li><a class="dropdown-item" href="/cadastro/tipos_procedimento/">Tipos de Procedimentos</a></li>
+                            <li><a class="dropdown-item" href="/cadastro/profissionais/">Profissionais</a></li>
+                            <li><a class="dropdown-item" href="/cadastro/procedimentos/">Procedimentos</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="logoutBtn"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Informações do Usuário -->
+    <div class="container mt-3">
+        <p class="text-end text-muted" id="userLogged"></p>
     </div>
-  </nav>
 
-  <div class="container-fluid">
-    <div class="row">
-      <!-- 🔹 Menu Lateral -->
-      <div class="col-md-2 bg-light p-3">
-        <h5 class="text-center">Gerenciamento</h5>
-        <ul class="nav flex-column">
-          <li class="nav-item"><a class="nav-link" href="/tipos_anestesia/">Tipos de Anestesia</a></li>
-          <li class="nav-item"><a class="nav-link" href="/tipos_procedimento/">Tipos de Procedimentos</a></li>
-          <li class="nav-item"><a class="nav-link" href="/profissionais/">Profissionais</a></li>
-          <li class="nav-item"><a class="nav-link active fw-bold" href="/crud/">Procedimentos</a></li>
-        </ul>
-      </div>
-
-      <!-- 🔹 Conteúdo Principal -->
-      <div class="col-md-10 p-4">
+    <!-- Filtro por Data -->
+    <div class="container mt-4">
         <h2 class="text-center mb-4">Gerenciamento de Procedimentos</h2>
-
-        <!-- 🔹 Filtro por Data -->
-        <div class="row mb-3">
-          <div class="col-md-4">
-            <label for="dataInicio" class="form-label">Data Início</label>
-            <input type="date" id="dataInicio" class="form-control">
-          </div>
-          <div class="col-md-4">
-            <label for="dataFim" class="form-label">Data Fim</label>
-            <input type="date" id="dataFim" class="form-control">
-          </div>
-          <div class="col-md-4 d-flex align-items-end">
-            <button class="btn btn-primary w-100" id="filtrarBtn">Filtrar</button>
-          </div>
+        <div class="row g-2 mb-3">
+            <div class="col-md-4">
+                <label for="dataInicio" class="form-label">Data Inicial:</label>
+                <input type="date" id="dataInicio" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="dataFim" class="form-label">Data Final:</label>
+                <input type="date" id="dataFim" class="form-control">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button id="filtrarBtn" class="btn btn-primary w-100"><i class="fa fa-filter"></i> Filtrar</button>
+            </div>
         </div>
 
-        <!-- 🔹 Tabela de Procedimentos -->
+        <!-- Exportar para PDF -->
+        <button id="exportarPdfBtn" class="btn btn-success mb-3"><i class="fa fa-file-pdf"></i> Exportar PDF</button>
+
+        <!-- Tabela de Procedimentos -->
         <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>NOME PACIENTE</th>
-              <th>REGISTRO</th>
-              <th>PROCEDIMENTO</th>
-              <th>TIPO ANESTESIA</th>
-              <th>DATA</th>
-              <th>INÍCIO</th>
-              <th>FINAL</th>
-              <th>PROFISSIONAL</th>
-              <th>AÇÕES</th>
-            </tr>
-          </thead>
-          <tbody id="procedimentosTable">
-            <!-- Linhas geradas dinamicamente via JavaScript -->
-          </tbody>
+            <thead>
+                <tr>
+                    <th>NOME PACIENTE</th>
+                    <th>REGISTRO PACIENTE</th>
+                    <th>PROCEDIMENTO</th>
+                    <th>TIPO ANESTESIA</th>
+                    <th>DATA</th>
+                    <th>INÍCIO</th>
+                    <th>FINAL</th>
+                    <th>PROFISSIONAL</th>
+                    <th>AÇÕES</th>
+                </tr>
+            </thead>
+            <tbody id="procedimentosTable">
+                <!-- Linhas preenchidas pelo JavaScript -->
+            </tbody>
         </table>
-
-        <!-- 🔹 Botão para Exportar PDF -->
-        <button class="btn btn-success" id="exportarPdfBtn">Exportar para PDF</button>
-      </div>
     </div>
-  </div>
 
-  <!-- 🔹 Modal de Edição -->
-  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editModalLabel">Editar Procedimento</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Modal de Edição -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Editar Procedimento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="procedimentoId">
+                    
+                    <div class="mb-3">
+                        <label for="editNomePaciente" class="form-label">Nome do Paciente</label>
+                        <input type="text" id="editNomePaciente" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editRegistroPaciente" class="form-label">Registro do Paciente</label>
+                        <input type="text" id="editRegistroPaciente" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editData" class="form-label">Data do Procedimento</label>
+                        <input type="date" id="editData" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editProcedimento" class="form-label">Procedimento</label>
+                        <input type="text" id="editProcedimento" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editTipoAnestesia" class="form-label">Tipo de Anestesia</label>
+                        <input type="text" id="editTipoAnestesia" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editInicio" class="form-label">Horário de Início</label>
+                        <input type="time" id="editInicio" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editFinal" class="form-label">Horário de Final</label>
+                        <input type="time" id="editFinal" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editProfissional" class="form-label">Profissional</label>
+                        <input type="text" id="editProfissional" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="saveChangesBtn" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          <input type="hidden" id="procedimentoId">
-
-          <div class="mb-3">
-            <label for="editNomePaciente" class="form-label">Nome do Paciente</label>
-            <input type="text" id="editNomePaciente" class="form-control">
-          </div>
-
-          <div class="mb-3">
-            <label for="editRegistroPaciente" class="form-label">Registro do Paciente</label>
-            <input type="text" id="editRegistroPaciente" class="form-control">
-          </div>
-
-          <div class="mb-3">
-            <label for="editData" class="form-label">Data</label>
-            <input type="date" id="editData" class="form-control">
-          </div>
-
-          <div class="mb-3">
-            <label for="editProcedimento" class="form-label">Procedimento</label>
-            <input type="text" id="editProcedimento" class="form-control">
-          </div>
-
-          <div class="mb-3">
-            <label for="editTipoAnestesia" class="form-label">Tipo de Anestesia</label>
-            <input type="text" id="editTipoAnestesia" class="form-control">
-          </div>
-
-          <div class="mb-3">
-            <label for="editInicio" class="form-label">Horário de Início</label>
-            <input type="time" id="editInicio" class="form-control">
-          </div>
-
-          <div class="mb-3">
-            <label for="editFinal" class="form-label">Horário de Final</label>
-            <input type="time" id="editFinal" class="form-control">
-          </div>
-
-          <div class="mb-3">
-            <label for="editProfissional" class="form-label">Profissional</label>
-            <input type="text" id="editProfissional" class="form-control">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" id="saveChangesBtn" class="btn btn-primary">Salvar Alterações</button>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <!-- Arquivo CRUD -->
-  <script src="{% static 'js/crud.js' %}"></script>
-  
-  <!-- Script de Exportação PDF -->
-  <script src="{% static 'js/export_pdf.js' %}"></script>
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Arquivo CRUD -->
+    <script src="{% static 'js/crud.js' %}"></script>
 </body>
 </html>
+
