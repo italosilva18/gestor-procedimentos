@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let url = "/api/procedimentos/";
             // Append the date filters if they exist
             if (filtroDataInicio && filtroDataFim) {
-                url += `?data_inicio=<span class="math-inline">\{filtroDataInicio\}&data\_fim\=</span>{filtroDataFim}`;
+                url += `?data_inicio=${filtroDataInicio}&data_fim=${filtroDataFim}`;
             }
             const response = await fetch(url);
             const data = await response.json();
