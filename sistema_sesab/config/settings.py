@@ -26,8 +26,18 @@ SECRET_KEY = 'django-insecure-3gkukvv9d99mrgh=p55g*i_de1k$o6nusz!ed8@je3vil%v-q+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+# Permitir requisições de qualquer origem (para testes)
+CORS_ALLOW_ALL_ORIGINS = True
 
+# Ou permitir apenas do localhost
+CORS_ALLOWED_ORIGINS =[
+    "http://localhost:8000",  # Se estiver rodando um front separado
+    "http://127.0.0.1:8000"
+]
+
+SESSION_COOKIE_AGE = 3600  # Tempo de vida da sessão em segundos (1 hora)
+SESSION_SAVE_EVERY_REQUEST = True  # Salva a sessão a cada requisição
 
 # Application definition
 
@@ -54,22 +64,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Permitir requisições de qualquer origem (para testes)
-CORS_ALLOW_ALL_ORIGINS = True
-
-# Ou permitir apenas do localhost
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",  # Se estiver rodando um front separado
-    "http://127.0.0.1:8000"
-]
-
 
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "procedimentos/static"),],
+        'DIRS': [os.path.join(BASE_DIR, "procedimentos/static")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

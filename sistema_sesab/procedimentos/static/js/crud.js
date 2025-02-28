@@ -1,9 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const procedimentosTable = document.getElementById("procedimentosTable");
     const editModal = new bootstrap.Modal(document.getElementById("editModal"));
-    const editForm = document.getElementById("editForm");
     const procedimentoIdInput = document.getElementById("procedimentoId");
-    
     const editNomePaciente = document.getElementById("editNomePaciente");
     const editRegistroPaciente = document.getElementById("editRegistroPaciente");
     const editData = document.getElementById("editData");
@@ -12,45 +10,48 @@ document.addEventListener("DOMContentLoaded", function () {
     const editInicio = document.getElementById("editInicio");
     const editFinal = document.getElementById("editFinal");
     const editProfissional = document.getElementById("editProfissional");
-
     const saveChangesBtn = document.getElementById("saveChangesBtn");
     const filtrarBtn = document.getElementById("filtrarBtn");
     const dataInicio = document.getElementById("dataInicio");
     const dataFim = document.getElementById("dataFim");
     const exportarPdfBtn = document.getElementById("exportarPdfBtn");
-    const userLogged = document.getElementById("userLogged");
     const logoutBtn = document.getElementById("logoutBtn");
 
-    // ⚠ Verifica se o usuário está logado
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-        alert("Você precisa estar logado para acessar esta página.");
-        window.location.href = "/login/";
-    }
-
-    // ✅ Atualiza o nome do usuário logado
-    userLogged.innerHTML = `Usuário: <b>${localStorage.getItem("username") || "Desconhecido"}</b>`;
+    // ✅ Obter o nome de usuário da página
+    const userLogged = document.getElementById("userLogged");
+    const username = userLogged.querySelector("b").textContent;
 
     // 🔹 Logout
     logoutBtn.addEventListener("click", function () {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("username");
-        window.location.href = "/login/";
+        // Chama a view de logout para encerrar a sessão
+        fetch('/logout/')
+            .then(() => {
+                // Redireciona para a página inicial após o logout
+                window.location.href = '/';
+            })
+            .catch(error => {
+                console.error('Erro ao fazer logout:', error);
+                // Redireciona para a página inicial mesmo se houver um erro no logout
+                window.location.href = '/';
+            });
+    });
+
+    // ✅ Filtrar procedimentos por data
+    filtrarBtn.addEventListener("click", function () {
+        const filtroDataInicio = dataInicio.value;  // Extract the value from the input field
+        const filtroDataFim = dataFim.value;    // Extract the value from the input field
+        carregarProcedimentos(filtroDataInicio, filtroDataFim);
     });
 
     // ✅ Carregar procedimentos
     async function carregarProcedimentos(filtroDataInicio = "", filtroDataFim = "") {
         try {
             let url = "/api/procedimentos/";
+            // Append the date filters if they exist
             if (filtroDataInicio && filtroDataFim) {
-                url += `?data_inicio=${filtroDataInicio}&data_fim=${filtroDataFim}`;
+                url += `?data_inicio=<span class="math-inline">\{filtroDataInicio\}&data\_fim\=</span>{filtroDataFim}`;
             }
-
-            const response = await fetch(url, {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            });
+            const response = await fetch(url);
             const data = await response.json();
 
             procedimentosTable.innerHTML = "";
@@ -79,11 +80,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ✅ Filtrar procedimentos por data
-    filtrarBtn.addEventListener("click", function () {
-        carregarProcedimentos(dataInicio.value, dataFim.value);
-    });
-
     // ✅ Excluir procedimento
     window.excluirProcedimento = async function (id) {
         if (!confirm("Tem certeza que deseja excluir este procedimento?")) return;
@@ -91,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const response = await fetch(`/api/procedimentos/${id}/`, {
                 method: "DELETE",
                 headers: {
-                    "Authorization": `Bearer ${token}`
+                    "X-CSRFToken": getCSRFToken() // Incluir o token CSRF
                 }
             });
             if (response.ok) {
@@ -146,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
+                    "X-CSRFToken": getCSRFToken() // Incluir o token CSRF
                 },
                 body: JSON.stringify(dadosEditados)
             });
@@ -191,3 +187,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // ✅ Carregar lista ao abrir a página
     carregarProcedimentos();
 });
+
+// ✅ Função para obter o token CSRF
+function getCSRFToken() {
+    let cookie = document.cookie.split("; ").find(row => row.startsWith("csrftoken="));
+    return cookie ? cookie.split("=")[1] : "";
+}
+
+
