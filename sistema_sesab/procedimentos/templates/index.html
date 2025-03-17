@@ -1,81 +1,110 @@
-{% load static %}
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Procedimentos</title>
+{% block title %}Bem-vindo | Sistema de Procedimentos{% endblock %}
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">Sistema de Procedimentos</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/cadastro/"><i class="fa fa-user-plus"></i> Cadastrar Procedimento</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/crud/"><i class="fa fa-list"></i> Gerenciar Procedimentos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/login/"><i class="fa fa-sign-in-alt"></i> Login</a></li>
-                </ul>
+{% block content %}
+
+<section class="hero-section bg-gradient-primary text-white rounded-4 p-5 mb-5 shadow">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-4">Gestão de Procedimentos Médicos</h1>
+        <p class="lead mb-4">Sistema integrado para gestão eficiente de procedimentos clínicos e cirúrgicos</p>
+        <div class="d-flex gap-2 justify-content-center">
+            <a href="/login/" class="btn btn-light btn-lg px-4">Começar Agora</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Grid -->
+<div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-hover">
+            <div class="card-body p-4 text-center">
+                <div class="icon-wrapper bg-success-soft mb-3">
+                    <i class="fa-solid fa-user-doctor fa-2x text-success"></i>
+                </div>
+                <h3 class="h5 card-title mb-3">Profissionais</h3>
+                <p class="card-text text-muted small">Cadastro e gestão de equipe médica</p>
+                <a href="/cadastro/profissionais/" class="btn btn-success stretched-link">
+                    Gerenciar <i class="fas fa-arrow-right ms-2"></i>
+                </a>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <main class="container mt-5">
-        <header class="bg-primary text-white text-center py-5">
-            <div class="container">
-                <h1>Bem-vindo ao Sistema de Procedimentos</h1>
-                <p class="lead">Gerencie e registre procedimentos médicos de forma simples e eficiente.</p>
-            </div>
-        </header>
-
-        <div class="container my-5">
-            <div class="row text-center">
-                <div class="col-md-4">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <i class="fa fa-user-plus fa-3x text-primary"></i>
-                            <h5 class="card-title mt-3">Cadastro</h5>
-                            <p class="card-text">Registre um novo procedimento rapidamente.</p>
-                            <a href="/cadastro/" class="btn btn-primary">Cadastrar</a>
-                        </div>
-                    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-hover">
+            <div class="card-body p-4 text-center">
+                <div class="icon-wrapper bg-primary-soft mb-3">
+                    <i class="fa-solid fa-syringe fa-2x text-primary"></i>
                 </div>
-                <div class="col-md-4">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <i class="fa fa-list fa-3x text-success"></i>
-                            <h5 class="card-title mt-3">Gerenciar</h5>
-                            <p class="card-text">Visualize, edite e exclua procedimentos.</p>
-                            <a href="/crud/" class="btn btn-success">Gerenciar</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <i class="fa fa-sign-in-alt fa-3x text-danger"></i>
-                            <h5 class="card-title mt-3">Login</h5>
-                            <p class="card-text">Acesse sua conta para gerenciar dados.</p>
-                            <a href="/login/" class="btn btn-danger">Login</a>
-                        </div>
-                    </div>
-                </div>
+                <h3 class="h5 card-title mb-3">Tipos de Anestesia</h3>
+                <p class="card-text text-muted small">Catálogo de técnicas anestésicas</p>
+                <a href="/cadastro/tipos_anestesia/" class="btn btn-primary stretched-link">
+                    Gerenciar <i class="fas fa-arrow-right ms-2"></i>
+                </a>
             </div>
         </div>
-    </main>
+    </div>
 
-    <footer class="bg-dark text-white text-center py-3">
-        <p>&copy; 2025 Sistema de Procedimentos | Desenvolvido por Ítalo</p>
-    </footer>
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-hover">
+            <div class="card-body p-4 text-center">
+                <div class="icon-wrapper bg-info-soft mb-3">
+                    <i class="fa-solid fa-scissors fa-2x text-info"></i>
+                </div>
+                <h3 class="h5 card-title mb-3">Procedimentos</h3>
+                <p class="card-text text-muted small">Registro completo de intervenções</p>
+                <a href="/cadastro/tipos_procedimentos/" class="btn btn-info stretched-link">
+                    Gerenciar <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-hover">
+            <div class="card-body p-4 text-center">
+                <div class="icon-wrapper bg-warning-soft mb-3">
+                    <i class="fa-solid fa-file-medical fa-2x text-warning"></i>
+                </div>
+                <h3 class="h5 card-title mb-3">Cadastrar Procedimento</h3>
+                <p class="card-text text-muted small">Adicionar novo procedimento no sistema</p>
+                <a href="/cadastro/" class="btn btn-warning stretched-link">
+                    Cadastrar <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-hover">
+            <div class="card-body p-4 text-center">
+                <div class="icon-wrapper bg-dark-soft mb-3">
+                    <i class="fa-solid fa-list fa-2x text-dark"></i>
+                </div>
+                <h3 class="h5 card-title mb-3">Gerenciar Procedimentos</h3>
+                <p class="card-text text-muted small">Visualizar e editar registros existentes</p>
+                <a href="/crud/" class="btn btn-dark stretched-link">
+                    Gerenciar <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-hover">
+            <div class="card-body p-4 text-center">
+                <div class="icon-wrapper bg-secondary-soft mb-3">
+                    <i class="fa-solid fa-sign-in-alt fa-2x text-secondary"></i>
+                </div>
+                <h3 class="h5 card-title mb-3">Login</h3>
+                <p class="card-text text-muted small">Acesse sua conta para gerenciar</p>
+                <a href="/login/" class="btn btn-secondary stretched-link">
+                    Login <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

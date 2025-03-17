@@ -52,5 +52,5 @@ document.addEventListener("DOMContentLoaded", function () {
     // Ativar o autocomplete nos campos necessários
     setupAutocomplete("profissional_nome", "/api/profissionais/");
     setupAutocomplete("tipo_anestesia_nome", "/api/tipos_anestesia/");
-    setupAutocomplete("procedimento_nome", "/api/tipos_procedimento/");
+    setupAutocomplete("procedimento_nome", "/api/tipos_procedimentos/");
 });

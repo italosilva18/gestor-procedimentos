@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tipos de Procedimentos | Sistema{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h2 class="text-center mb-4 fw-bold">Tipos de Procedimentos</h2>
+
+    <!-- Formulário de Cadastro -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <form id="formProcedimento" class="row g-3">
+                <div class="col-md-6">
+                    <label for="nomeProcedimento" class="form-label">Nome do Procedimento</label>
+                    <input type="text" name="nome" id="nomeProcedimento" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="cidProcedimento" class="form-label">CID</label>
+                    <input type="text" name="cid" id="cidProcedimento" class="form-control" required>
+                </div>
+                <div class="col-12 d-flex justify-content-end">
+                    <button type="submit" id="salvarProcedimento" class="btn btn-success d-flex align-items-center gap-1">
+                        <i class="fa fa-plus"></i> Cadastrar Procedimento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de Procedimentos -->
+    <div class="table-responsive">
+        <table class="table table-striped shadow-sm rounded">
+            <thead class="table-primary">
+                <tr>
+                    <th>NOME</th>
+                    <th>CID</th>
+                    <th class="text-end pe-4">AÇÕES</th>
+                </tr>
+            </thead>
+            <tbody id="procedimentosTable">
+                <!-- Conteúdo preenchido via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tipos_procedimentos.js' %}"></script>
+{% endblock %}

@@ -15,115 +15,107 @@ document.addEventListener("DOMContentLoaded", function () {
     const dataInicio = document.getElementById("dataInicio");
     const dataFim = document.getElementById("dataFim");
     const exportarPdfBtn = document.getElementById("exportarPdfBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
 
-    // ✅ Obter o nome de usuário da página
-    const userLogged = document.getElementById("userLogged");
-    const username = userLogged.querySelector("b").textContent;
+    let procedimentosData = [];
 
-    // 🔹 Logout
-    logoutBtn.addEventListener("click", function () {
-        // Chama a view de logout para encerrar a sessão
-        fetch('/logout/')
-            .then(() => {
-                // Redireciona para a página inicial após o logout
-                window.location.href = '/';
-            })
-            .catch(error => {
-                console.error('Erro ao fazer logout:', error);
-                // Redireciona para a página inicial mesmo se houver um erro no logout
-                window.location.href = '/';
-            });
-    });
-
-    // ✅ Filtrar procedimentos por data
-    filtrarBtn.addEventListener("click", function () {
-        const filtroDataInicio = dataInicio.value;  // Extract the value from the input field
-        const filtroDataFim = dataFim.value;    // Extract the value from the input field
-        carregarProcedimentos(filtroDataInicio, filtroDataFim);
-    });
-
-    // ✅ Carregar procedimentos
-    async function carregarProcedimentos(filtroDataInicio = "", filtroDataFim = "") {
+    async function carregarProcedimentos() {
         try {
-            let url = "/api/procedimentos/";
-            // Append the date filters if they exist
-            if (filtroDataInicio && filtroDataFim) {
-                url += `?data_inicio=${filtroDataInicio}&data_fim=${filtroDataFim}`;
-            }
-            const response = await fetch(url);
-            const data = await response.json();
-
-            procedimentosTable.innerHTML = "";
-            data.forEach(proc => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td>${proc.nome_paciente}</td>
-                    <td>${proc.registro_paciente}</td>
-                    <td>${proc.procedimento?.nome || ""}</td>
-                    <td>${proc.tipo_anestesia?.nome || ""}</td>
-                    <td>${formatarData(proc.data)}</td>
-                    <td>${formatarHora(proc.inicio)}</td>
-                    <td>${formatarHora(proc.final)}</td>
-                    <td>${proc.profissional?.nome || ""}</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" onclick="editarProcedimento(${proc.id})">Editar</button>
-                        <button class="btn btn-sm btn-danger" onclick="excluirProcedimento(${proc.id})">Excluir</button>
-                    </td>
-                `;
-                procedimentosTable.appendChild(tr);
-            });
-
+            const response = await fetch("/api/procedimentos/");
+            procedimentosData = await response.json();
+            renderizarTabela(procedimentosData);
         } catch (error) {
-            console.error("Erro ao carregar procedimentos:", error);
-            alert("Não foi possível carregar os procedimentos.");
+            alert("Erro ao carregar procedimentos");
         }
     }
 
-    // ✅ Excluir procedimento
-    window.excluirProcedimento = async function (id) {
-        if (!confirm("Tem certeza que deseja excluir este procedimento?")) return;
-        try {
-            const response = await fetch(`/api/procedimentos/${id}/`, {
-                method: "DELETE",
-                headers: {
-                    "X-CSRFToken": getCSRFToken() // Incluir o token CSRF
-                }
-            });
-            if (response.ok) {
-                alert("Procedimento excluído com sucesso!");
-                carregarProcedimentos();
-            } else {
-                alert("Erro ao excluir procedimento.");
-            }
-        } catch (error) {
-            console.error("Erro ao excluir procedimento:", error);
-            alert("Não foi possível excluir o procedimento.");
+    function renderizarTabela(data) {
+        procedimentosTable.innerHTML = "";
+        data.forEach(proc => {
+            const duracao = calcularDuracao(proc.inicio, proc.final);
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${proc.nome_paciente}</td>
+                <td>${proc.registro_paciente}</td>
+                <td>${proc.procedimento?.nome || ""}</td>
+                <td>${proc.tipo_anestesia?.nome || ""}</td>
+                <td>${formatarData(proc.data)}</td>
+                <td>${formatarHora(proc.inicio)} - ${formatarHora(proc.final)}</td>
+                <td>${duracao}</td>
+                <td>${proc.profissional?.nome || ""}</td>
+                <td class="text-end pe-4">
+                    <button class="btn btn-sm btn-warning me-2" onclick="editarProcedimento(${proc.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="excluirProcedimento(${proc.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            procedimentosTable.appendChild(tr);
+        });
+    }
+
+    function calcularDuracao(inicioStr, finalStr) {
+        const [hInicio, mInicio] = inicioStr.split(":").map(Number);
+        const [hFinal, mFinal] = finalStr.split(":").map(Number);
+
+        let inicio = new Date(0, 0, 0, hInicio, mInicio);
+        let final = new Date(0, 0, 0, hFinal, mFinal);
+
+        if (final <= inicio) {
+            final.setDate(final.getDate() + 1);
         }
-    };
 
-    // ✅ Editar procedimento
+        let diffMs = final - inicio;
+        let diffH = Math.floor(diffMs / (1000 * 60 * 60));
+        let diffM = Math.floor((diffMs / (1000 * 60)) % 60);
+
+        return `${diffH.toString().padStart(2, '0')}:${diffM.toString().padStart(2, '0')}:00`;
+    }
+
+    function formatarData(dataStr) {
+        const data = new Date(dataStr);
+        return data.toLocaleDateString("pt-BR");
+    }
+
+    function formatarHora(horaStr) {
+        return horaStr.substring(0, 5);
+    }
+
     window.editarProcedimento = function (id) {
-        procedimentoIdInput.value = id;
-        const row = [...procedimentosTable.querySelectorAll("tr")].find(tr =>
-            tr.querySelector("button").getAttribute("onclick")?.includes(`(${id})`)
-        );
-        if (!row) return;
+        const procedimento = procedimentosData.find(p => p.id === id);
+        if (!procedimento) return;
 
-        const cells = row.querySelectorAll("td");
-        editNomePaciente.value = cells[0].textContent.trim();
-        editRegistroPaciente.value = cells[1].textContent.trim();
-        editProcedimento.value = cells[2].textContent.trim();
-        editTipoAnestesia.value = cells[3].textContent.trim();
-        editData.value = converterDataParaYYYYMMDD(cells[4].textContent.trim());
-        editInicio.value = cells[5].textContent.trim();
-        editFinal.value = cells[6].textContent.trim();
-        editProfissional.value = cells[7].textContent.trim();
+        procedimentoIdInput.value = id;
+        editNomePaciente.value = procedimento.nome_paciente;
+        editRegistroPaciente.value = procedimento.registro_paciente;
+        editData.value = procedimento.data;
+        editProcedimento.value = procedimento.procedimento?.nome || "";
+        editTipoAnestesia.value = procedimento.tipo_anestesia?.nome || "";
+        editInicio.value = formatarHora(procedimento.inicio);
+        editFinal.value = formatarHora(procedimento.final);
+        editProfissional.value = procedimento.profissional?.nome || "";
 
         editModal.show();
     };
 
-    // ✅ Salvar alterações no procedimento editado
+    window.excluirProcedimento = async function (id) {
+        if (!confirm("Deseja realmente excluir?")) return;
+        try {
+            const response = await fetch(`/api/procedimentos/${id}/`, {
+                method: "DELETE",
+                headers: getHeaders()
+            });
+            if (response.ok) {
+                procedimentosData = procedimentosData.filter(p => p.id !== id);
+                renderizarTabela(procedimentosData);
+                alert("Excluído com sucesso!");
+            }
+        } catch (err) {
+            alert("Erro ao excluir.");
+        }
+    };
+
     saveChangesBtn.addEventListener("click", async function () {
         const id = procedimentoIdInput.value;
         const dadosEditados = {
@@ -132,66 +124,51 @@ document.addEventListener("DOMContentLoaded", function () {
             data: editData.value,
             procedimento_nome: editProcedimento.value,
             tipo_anestesia_nome: editTipoAnestesia.value,
-            inicio: editInicio.value,
-            final: editFinal.value,
+            inicio: editInicio.value + ":00",
+            final: editFinal.value + ":00",
             profissional_nome: editProfissional.value
         };
 
         try {
             const response = await fetch(`/api/procedimentos/${id}/`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": getCSRFToken() // Incluir o token CSRF
-                },
+                headers: getHeaders(),
                 body: JSON.stringify(dadosEditados)
             });
             if (response.ok) {
                 alert("Procedimento atualizado com sucesso!");
-                editModal.hide();
                 carregarProcedimentos();
-            } else {
-                alert("Erro ao atualizar procedimento.");
+                editModal.hide();
             }
-        } catch (error) {
-            console.error("Erro ao salvar mudanças:", error);
-            alert("Não foi possível atualizar o procedimento.");
+        } catch (err) {
+            alert("Erro ao atualizar.");
         }
     });
 
-    // ✅ Converter data para YYYY-MM-DD
-    function converterDataParaYYYYMMDD(dataBR) {
-        const [dia, mes, ano] = dataBR.split("/");
-        if (!dia || !mes || !ano) return "";
-        return `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
-    }
-
-    // ✅ Formatar data e hora
-    function formatarData(dataStr) {
-        if (!dataStr) return "";
-        const data = new Date(dataStr);
-        return data.toLocaleDateString("pt-BR", { timeZone: "UTC" });
-    }
-
-    function formatarHora(horaStr) {
-        if (!horaStr) return "";
-        const [hora, minuto] = horaStr.split(":");
-        return `${hora}:${minuto}`;
-    }
-
-    // ✅ Exportar para PDF
-    exportarPdfBtn.addEventListener("click", function () {
-        window.print();
+    filtrarBtn.addEventListener("click", () => {
+        const inicio = dataInicio.value;
+        const fim = dataFim.value;
+        const filtrados = procedimentosData.filter(proc => {
+            const dataProc = new Date(proc.data);
+            return (!inicio || dataProc >= new Date(inicio)) &&
+                   (!fim || dataProc <= new Date(fim));
+        });
+        renderizarTabela(filtrados);
     });
 
-    // ✅ Carregar lista ao abrir a página
+    exportarPdfBtn.addEventListener("click", () => window.print());
+
+    function getHeaders() {
+        return {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken()
+        };
+    }
+
+    function getCSRFToken() {
+        let cookie = document.cookie.split("; ").find(row => row.startsWith("csrftoken="));
+        return cookie ? cookie.split("=")[1] : "";
+    }
+
     carregarProcedimentos();
 });
-
-// ✅ Função para obter o token CSRF
-function getCSRFToken() {
-    let cookie = document.cookie.split("; ").find(row => row.startsWith("csrftoken="));
-    return cookie ? cookie.split("=")[1] : "";
-}
-
-

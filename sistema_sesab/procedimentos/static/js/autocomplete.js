@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     async function carregarProcedimentos(query) {
         try {
-            const response = await fetch("/api/tipos_procedimento/");
+            const response = await fetch("/api/tipos_procedimentos/");
             if (!response.ok) throw new Error("Erro ao buscar procedimentos");
 
             const data = await response.json();

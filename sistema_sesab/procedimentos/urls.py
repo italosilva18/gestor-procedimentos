@@ -10,7 +10,7 @@ from procedimentos.views import (
 # Criando um roteador para as rotas da API
 router = DefaultRouter()
 router.register(r'tipos_anestesia', TipoAnestesiaViewSet)
-router.register(r'tipos_procedimento', TipoProcedimentoViewSet)
+router.register(r'tipos_procedimentos', TipoProcedimentoViewSet)
 router.register(r'profissionais', ProfissionalViewSet)
 router.register(r'procedimentos', ProcedimentoViewSet, basename='procedimento')  # 👈 Add basename
 

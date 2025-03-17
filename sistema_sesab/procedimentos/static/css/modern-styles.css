@@ -1,0 +1,86 @@
+/* Google Fonts */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Navbar */
+.navbar {
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+/* Hero Section */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+}
+
+/* Shadow Hover */
+.shadow-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shadow-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon Wrapper */
+.icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-primary-soft {
+    background-color: rgba(58, 123, 213, 0.1);
+}
+
+.bg-success-soft {
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+.bg-info-soft {
+    background-color: rgba(23, 162, 184, 0.1);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+}
+
+.btn-outline-light:hover {
+    background-color: #fff;
+    color: #3a7bd5;
+}
+
+/* Footer */
+.footer {
+    background-color: #fff;
+}
+
+/* Forms */
+.form-control {
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+}
+
+/* Table */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Modal */
+.modal-content {
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}

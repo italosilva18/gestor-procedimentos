@@ -16,3 +16,37 @@
 .autocomplete-item:hover {
     background: #f1f1f1;
 }
+
+:root {
+    --gradient-primary: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.shadow-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shadow-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.bg-gradient-primary {
+    background-image: var(--gradient-primary);
+}
+
+.icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-primary-soft { background-color: rgba(58,123,213,0.1); }
+.bg-success-soft { background-color: rgba(40,167,69,0.1); }
+.bg-info-soft { background-color: rgba(23,162,184,0.1); }
