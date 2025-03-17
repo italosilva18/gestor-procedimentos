@@ -1,78 +1,85 @@
+{% extends 'base_public.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Procedimento</title>
-    
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- CSS Personalizado -->
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
-<body>
-    <div class="container mt-5">
-        <h2 class="text-center">Cadastro de Procedimento</h2>
-        <form id="formProcedimento">
-            {% csrf_token %}  <!-- CSRF Token para segurança -->
-            
-            <div class="mb-3">
-                <label for="nome_paciente" class="form-label">Nome do Paciente</label>
-                <input type="text" id="nome_paciente" name="nome_paciente" class="form-control" required>
+
+{% block title %}Cadastro de Procedimento{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            <!-- Alerta de sucesso -->
+            <div id="alertaSucesso" class="alert alert-success d-none text-center" role="alert">
+                <i class="fas fa-check-circle me-2"></i> Procedimento cadastrado com sucesso!
             </div>
 
-            <div class="mb-3">
-                <label for="registro_paciente" class="form-label">Registro do Paciente</label>
-                <input type="text" id="registro_paciente" name="registro_paciente" class="form-control" required>
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">Cadastro de Procedimento</h4>
+                </div>
+                <div class="card-body">
+                    <form id="formProcedimento">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="nome_paciente" class="form-label">Nome do Paciente</label>
+                            <input type="text" id="nome_paciente" name="nome_paciente" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="registro_paciente" class="form-label">Registro do Paciente</label>
+                            <input type="text" id="registro_paciente" name="registro_paciente" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="data" class="form-label">Data do Procedimento</label>
+                            <input type="date" id="data" name="data" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3 position-relative">
+                            <label for="procedimento_nome" class="form-label">Procedimento</label>
+                            <input type="text" id="procedimento_nome" name="procedimento_nome" class="form-control" required autocomplete="off">
+                            <div id="sugestoesProcedimento" class="list-group position-absolute w-100"></div>
+                        </div>
+
+                        <div class="mb-3 position-relative">
+                            <label for="tipo_anestesia_nome" class="form-label">Tipo de Anestesia</label>
+                            <input type="text" id="tipo_anestesia_nome" name="tipo_anestesia_nome" class="form-control" required autocomplete="off">
+                            <div id="sugestoesAnestesia" class="list-group position-absolute w-100"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inicio" class="form-label">Horário de Início</label>
+                            <input type="time" id="inicio" name="inicio" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="final" class="form-label">Horário de Final</label>
+                            <input type="time" id="final" name="final" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3 position-relative">
+                            <label for="profissional_nome" class="form-label">Profissional</label>
+                            <input type="text" id="profissional_nome" name="profissional_nome" class="form-control" required autocomplete="off">
+                            <div id="sugestoesProfissional" class="list-group position-absolute w-100"></div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Salvar Procedimento
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label for="data" class="form-label">Data do Procedimento</label>
-                <input type="date" id="data" name="data" class="form-control" required>
-            </div>
-
-            <!-- Procedimento com sugestões -->
-            <div class="mb-3 position-relative">
-                <label for="procedimento_nome" class="form-label">Procedimento</label>
-                <input type="text" id="procedimento_nome" name="procedimento_nome" class="form-control" required autocomplete="off">
-                <div id="sugestoesProcedimento" class="list-group"></div>
-            </div>
-
-            <!-- Tipo de Anestesia com sugestões -->
-            <div class="mb-3 position-relative">
-                <label for="tipo_anestesia_nome" class="form-label">Tipo de Anestesia</label>
-                <input type="text" id="tipo_anestesia_nome" name="tipo_anestesia_nome" class="form-control" required autocomplete="off">
-                <div id="sugestoesAnestesia" class="list-group"></div>
-            </div>
-
-            <div class="mb-3">
-                <label for="inicio" class="form-label">Horário de Início</label>
-                <input type="time" id="inicio" name="inicio" class="form-control" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="final" class="form-label">Horário de Final</label>
-                <input type="time" id="final" name="final" class="form-control" required>
-            </div>
-
-            <!-- Profissional com sugestões -->
-            <div class="mb-3 position-relative">
-                <label for="profissional_nome" class="form-label">Profissional</label>
-                <input type="text" id="profissional_nome" name="profissional_nome" class="form-control" required autocomplete="off">
-                <div id="sugestoesProfissional" class="list-group"></div>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
-        </form>
+        </div>
     </div>
+</div>
+{% endblock %}
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Scripts -->
-    <script src="{% static 'js/autocomplete.js' %}"></script>
-    <script src="{% static 'js/api.js' %}"></script>
-</body>
-</html>
+{% block extra_js %}
+<script src="{% static 'js/autocomplete.js' %}"></script>
+<script src="{% static 'js/api.js' %}"></script>
+{% endblock %}
+
