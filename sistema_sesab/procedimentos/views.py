@@ -1,6 +1,7 @@
 from urllib import request
 from django.shortcuts import render, redirect
 from rest_framework import viewsets, status
+from django.contrib import messages
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -20,7 +21,6 @@ class TipoAnestesiaViewSet(viewsets.ModelViewSet):
 class TipoProcedimentoViewSet(viewsets.ModelViewSet):
     queryset = TipoProcedimento.objects.all()
     serializer_class = TipoProcedimentoSerializer
-    #permission_classes = [IsAuthenticated]  # 🔐 Apenas usuários autenticados podem visualizar
 
 class ProfissionalViewSet(viewsets.ModelViewSet):
     queryset = Profissional.objects.all()
@@ -28,7 +28,7 @@ class ProfissionalViewSet(viewsets.ModelViewSet):
 
 class ProcedimentoViewSet(viewsets.ModelViewSet):
     serializer_class = ProcedimentoSerializer
-    permission_classes = [IsAuthenticated]  # ✅ Exige autenticação para edição 
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = Procedimento.objects.all()
@@ -39,12 +39,11 @@ class ProcedimentoViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
-        print("Recebendo dados:", request.data)  # 🔥 Debug do que está chegando na API
+        print("Recebendo dados:", request.data)
         return super().create(request, *args, **kwargs)
 
-# ✅ Endpoint de Registro de Usuário
 class RegistrarUsuarioView(APIView):
-    permission_classes = [AllowAny]  # Permite criar usuários sem autenticação
+    permission_classes = [AllowAny]
 
     def post(self, request):
         username = request.data.get('username')
@@ -58,61 +57,50 @@ class RegistrarUsuarioView(APIView):
         
         user = User.objects.create_user(username=username, password=password, is_staff=True)
         return Response({'message': 'Usuário criado com sucesso'}, status=status.HTTP_201_CREATED)
-    
-# ✅ Endpoint de Login (ORM do Django)
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        print(f"Tentativa de login: username={username}, password={password}")  # 👈
+        print(f"Tentativa de login: username={username}, password={password}")
         user = authenticate(request, username=username, password=password)
-        print(f"Usuário autenticado: {user}")  # 👈
+        print(f"Usuário autenticado: {user}")
         if user is not None:
             login(request, user)
-            return redirect('crud_procedimentos')  # Redireciona para a página crud_procedimentos
+            return redirect('/')
         else:
-            print("Autenticação falhou")  # 👈
-            # Autenticação falhou
+            print("Autenticação falhou")
             return render(request, 'login.html', {'error': 'Credenciais inválidas'})
     else:
-        return render(request, 'login.html')  # Renderiza o template login.html
+        return render(request, 'login.html')
 
-# 📌 View de Logout
 def logout_view(request):
     logout(request)
-    return redirect('login')  # Redireciona para a página de login após o logout
+    messages.info(request, "Você saiu com sucesso.")
+    return redirect('login')
 
-# 🔥 Página de Login
-def login_page(request):
-    return render(request, "login.html")
-
-# 🔥 Página Inicial
+@login_required(login_url='/login/')
 def index(request):
     return render(request, "index.html")
 
-# 🔥 Página de Cadastro de Procedimento
-@login_required(login_url='/login/')  # Certifique-se de que o login_url esteja correto
+@login_required(login_url='/login/')
 def cadastro_procedimento(request):
     return render(request, "cadastro_procedimento.html")
 
-# 🔥 Página de Gerenciamento de Procedimentos
 @login_required(login_url='/login/')
 def crud_procedimentos(request):
-    print(f"Usuário na view crud_procedimentos: {request.user}")  # 👈
-    context = {'user': request.user}  # ✅ Passa o usuário para o contexto
+    print(f"Usuário na view crud_procedimentos: {request.user}")
+    context = {'user': request.user}
     return render(request, 'crud.html', context)
 
-# 🔥 Página de Cadastro de Tipos de Anestesia
 @login_required
 def tipos_anestesia(request):
     return render(request, "tipos_anestesia.html")
 
-# 🔥 Página de Cadastro de Tipos de Procedimento
 @login_required
 def tipos_procedimentos(request):
     return render(request, "tipos_procedimentos.html")
 
-# 🔥 Página de Cadastro de Profissionais
 @login_required
 def profissionais(request):
     return render(request, "profissionais.html")
