@@ -1,4 +1,4 @@
-from urllib import request
+import logging
 from django.shortcuts import render, redirect
 from rest_framework import viewsets, status
 from django.contrib import messages
@@ -13,6 +13,8 @@ from .serializers import (
     TipoAnestesiaSerializer, TipoProcedimentoSerializer,
     ProfissionalSerializer, ProcedimentoSerializer
 )
+
+logger = logging.getLogger(__name__)
 
 class TipoAnestesiaViewSet(viewsets.ModelViewSet):
     queryset = TipoAnestesia.objects.all()
@@ -39,7 +41,7 @@ class ProcedimentoViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
-        print("Recebendo dados:", request.data)
+        logger.debug("Recebendo dados: %s", request.data)
         return super().create(request, *args, **kwargs)
 
 class RegistrarUsuarioView(APIView):
@@ -62,14 +64,14 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        print(f"Tentativa de login: username={username}, password={password}")
+        logger.debug("Tentativa de login: username=%s", username)
         user = authenticate(request, username=username, password=password)
-        print(f"Usuário autenticado: {user}")
+        logger.debug("Usuário autenticado: %s", user)
         if user is not None:
             login(request, user)
             return redirect('/')
         else:
-            print("Autenticação falhou")
+            logger.warning("Autenticação falhou")
             return render(request, 'login.html', {'error': 'Credenciais inválidas'})
     else:
         return render(request, 'login.html')
@@ -88,7 +90,7 @@ def cadastro_procedimento(request):
 
 @login_required(login_url='/login/')
 def crud_procedimentos(request):
-    print(f"Usuário na view crud_procedimentos: {request.user}")
+    logger.debug("Usuário na view crud_procedimentos: %s", request.user)
     context = {'user': request.user}
     return render(request, 'crud.html', context)
 
