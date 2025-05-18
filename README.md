@@ -158,3 +158,7 @@ python manage.py test
 - [Documentação Django](https://docs.djangoproject.com/)
 - [Documentação Django REST Framework](https://www.django-rest-framework.org/)
 
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
