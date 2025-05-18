@@ -1,0 +1,8 @@
+.git
+.vscode
+__pycache__
+*.pyc
+venv
+*.sqlite3
+staticfiles # Se você não quiser copiar os gerados localmente para a imagem
+media # Se aplicável

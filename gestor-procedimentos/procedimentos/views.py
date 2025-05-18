@@ -28,7 +28,7 @@ class ProfissionalViewSet(viewsets.ModelViewSet):
 
 class ProcedimentoViewSet(viewsets.ModelViewSet):
     serializer_class = ProcedimentoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         queryset = Procedimento.objects.all()
@@ -83,7 +83,6 @@ def logout_view(request):
 def index(request):
     return render(request, "index.html")
 
-@login_required(login_url='/login/')
 def cadastro_procedimento(request):
     return render(request, "cadastro_procedimento.html")
 

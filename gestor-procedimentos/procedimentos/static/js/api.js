@@ -1,3 +1,15 @@
+// Função para capturar o token CSRF do cookie
+function getCSRFToken() {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith('csrftoken=')) {
+            return cookie.substring('csrftoken='.length, cookie.length);
+        }
+    }
+    return '';
+}
+
 document.getElementById("formProcedimento").addEventListener("submit", async function (e) {
     e.preventDefault();
 
@@ -18,16 +30,16 @@ document.getElementById("formProcedimento").addEventListener("submit", async fun
             "Content-Type": "application/json",
             "X-CSRFToken": getCSRFToken()
         },
+        // Se precisar enviar cookies de sessão (caso a view exija autenticação),
+        // descomente a linha abaixo:
+        // credentials: "include",
         body: JSON.stringify(dados)
     });
 
     if (resposta.ok) {
-        // ✅ Exibe alerta de sucesso
         const alerta = document.getElementById("alertaSucesso");
         alerta.classList.remove("d-none");
         alerta.scrollIntoView({ behavior: "smooth" });
-
-        // Limpa os campos do formulário
         e.target.reset();
     } else {
         alert("Erro ao cadastrar procedimento!");
