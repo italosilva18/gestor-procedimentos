@@ -23,7 +23,7 @@ if not User.objects.filter(username='admin').exists():
     User.objects.create_superuser('admin', 'admin@example.com', '123456')
     print("✅ Superusuário criado: admin / 123456")
 else:
-    print("ℹ️  Superusuário já existe.")
+    print("ℹ Superusuário já existe.")
 EOF
 
 # Inicia o servidor
